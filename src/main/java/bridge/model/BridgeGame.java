@@ -24,7 +24,8 @@ public class BridgeGame {
         runCount++;
     }
 
-    public void print() { //TODO: 지우기
+    public void print() {
+        //TODO: 지우기
         System.out.println(bridge);
         System.out.print("윗 칸: ");
         System.out.println(progressBridges.get(MoveOption.UP));

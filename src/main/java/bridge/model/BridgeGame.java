@@ -4,7 +4,6 @@ import bridge.enums.MoveOption;
 import bridge.enums.MoveResult;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class BridgeGame {

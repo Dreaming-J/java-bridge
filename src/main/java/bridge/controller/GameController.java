@@ -30,5 +30,26 @@ public class GameController extends RepeatModule {
             outputView.printMap(bridgeGame.getProgressBridge(MoveOption.UP));
             outputView.printMap(bridgeGame.getProgressBridge(MoveOption.DOWN));
         } while (bridgeGame.isGameContinue());
+
+        retryBranch();
+    }
+
+    private void retryBranch() {
+        if (bridgeGame.isGameClear()) {
+            quit();
+            return;
+        }
+
+        retry();
+    }
+
+    private void retry() {
+        //TODO: 수정
+        System.out.println("재시작");
+    }
+
+    private void quit() {
+        //TODO: 수정
+        System.out.println("종료");
     }
 }

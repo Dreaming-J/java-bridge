@@ -1,7 +1,7 @@
 package bridge.model;
 
 import bridge.BridgeNumberGenerator;
-import bridge.enums.BridgeTile;
+import bridge.enums.MoveOption;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,7 @@ public class BridgeMaker {
 
         for (int i = 0; i < size; i++) {
             int randomNumber = bridgeNumberGenerator.generate();
-            String randomTile = BridgeTile.from(randomNumber).getValue();
+            String randomTile = MoveOption.fromNumber(randomNumber).getCommand();
             bridge.add(randomTile);
         }
 

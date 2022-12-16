@@ -16,11 +16,12 @@ public class InputView {
         return bridgeSize;
     }
 
-    /**
-     * 사용자가 이동할 칸을 입력받는다.
-     */
     public String readMoving() {
-        return null;
+        System.out.println(INPUT_MSG_MOVE_COMMAND.get());
+        String moveCommand = Console.readLine();
+        inputValidator.validateMoveCommand(moveCommand);
+
+        return moveCommand;
     }
 
     /**

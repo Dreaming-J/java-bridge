@@ -19,6 +19,11 @@ public enum MoveOption {
         return this.command;
     }
 
+    public static boolean isNotContaionsCommand(String command) {
+        return !Stream.of(values())
+                .anyMatch(option -> option.command.equals(command));
+    }
+
     public MoveOption getAnotherOption() {
         return Stream.of(values())
                 .filter(option -> !Objects.equals(option, this))

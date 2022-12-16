@@ -2,6 +2,7 @@ package bridge.controller;
 
 import bridge.BridgeRandomNumberGenerator;
 import bridge.enums.MoveOption;
+import bridge.enums.RetryOption;
 import bridge.model.BridgeGame;
 import bridge.model.BridgeMaker;
 import bridge.module.RepeatModule;
@@ -44,8 +45,15 @@ public class GameController extends RepeatModule {
     }
 
     private void retry() {
-        //TODO: 수정
-        System.out.println("재시작");
+        String retryCommand = repeat(inputView::readGameCommand);
+
+        if (RetryOption.isRetry(retryCommand)) {
+            bridgeGame.retry();
+            start();
+            return;
+        }
+
+        quit();
     }
 
     private void quit() {

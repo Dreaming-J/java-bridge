@@ -36,10 +36,12 @@ public class BridgeGame {
     /**
      * Move
      */
-    public void move(String command) {
+    public boolean move(String command) {
         MoveOption moveOption = MoveOption.fromCommand(command);
         oneStepMoveMainCommandBridge(moveOption);
         oneStepMoveAnotherCommandBridge(moveOption.getAnotherOption());
+
+        return isSuccessToMove(moveOption);
     }
 
     private void oneStepMoveMainCommandBridge (MoveOption mainOption) {
@@ -62,6 +64,14 @@ public class BridgeGame {
         }
 
         return MoveResult.UNPASS.get();
+    }
+
+    private boolean isSuccessToMove(MoveOption mainOption) {
+        List<String> mainProgressBridge = progressBridges.get(mainOption);
+        int lastIndex = mainProgressBridge.size() - 1;
+        String moveResult = mainProgressBridge.get(lastIndex);
+
+        return Objects.equals(moveResult, MoveResult.PASS.get());
     }
 
     /**

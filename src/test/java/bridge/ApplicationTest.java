@@ -3,8 +3,10 @@ package bridge;
 import static camp.nextstep.edu.missionutils.test.Assertions.assertRandomNumberInRangeTest;
 import static camp.nextstep.edu.missionutils.test.Assertions.assertSimpleTest;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.util.Lists.newArrayList;
 
+import bridge.model.BridgeGame;
 import bridge.model.BridgeMaker;
 import camp.nextstep.edu.missionutils.test.NsTest;
 import java.util.List;
@@ -20,6 +22,17 @@ class ApplicationTest extends NsTest {
         BridgeMaker bridgeMaker = new BridgeMaker(numberGenerator);
         List<String> bridge = bridgeMaker.makeBridge(3);
         assertThat(bridge).containsExactly("U", "D", "D");
+    }
+
+    @Test
+    void 다리_이동_테스트() {
+        BridgeNumberGenerator numberGenerator = new TestNumberGenerator(newArrayList(1, 0, 0));
+        BridgeMaker bridgeMaker = new BridgeMaker(numberGenerator);
+        BridgeGame bridgeGame = new BridgeGame(bridgeMaker.makeBridge(3));
+
+        assertThat(bridgeGame.move("U")).isTrue();
+        assertThat(bridgeGame.move("U")).isFalse();
+        assertThat(bridgeGame.move("D")).isTrue();
     }
 
     @Test

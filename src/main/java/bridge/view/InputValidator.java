@@ -1,6 +1,7 @@
 package bridge.view;
 
 import bridge.enums.MoveOption;
+import bridge.enums.RetryOption;
 
 import static bridge.message.ErrorMsg.*;
 
@@ -31,6 +32,15 @@ public class InputValidator {
      */
     public void validateMoveCommand(String moveCommnad) {
         if (MoveOption.isNotContaionsCommand(moveCommnad)) {
+            throw new IllegalArgumentException(ERROR_MSG_COMMAND_DOES_NOT_EXIST.get());
+        }
+    }
+
+    /**
+     * RetryCommand
+     */
+    public void validateRetryCommand(String retryCommnad) {
+        if (RetryOption.isNotContaionsCommand(retryCommnad)) {
             throw new IllegalArgumentException(ERROR_MSG_COMMAND_DOES_NOT_EXIST.get());
         }
     }

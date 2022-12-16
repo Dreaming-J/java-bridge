@@ -24,11 +24,12 @@ public class InputView {
         return moveCommand;
     }
 
-    /**
-     * 사용자가 게임을 다시 시도할지 종료할지 여부를 입력받는다.
-     */
     public String readGameCommand() {
-        return null;
+        System.out.println(INPUT_MSG_RETRY_COMMAND.get());
+        String retryCommand = Console.readLine();
+        inputValidator.validateRetryCommand(retryCommand);
+
+        return retryCommand;
     }
 
 

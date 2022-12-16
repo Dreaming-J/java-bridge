@@ -29,5 +29,5 @@
 
 
 ### 체크 리스트
- - [ ] ./gradlew.bat clean test
+ - [x] ./gradlew.bat clean test
  - [ ] 패키지 이동 등 제한 사항

@@ -33,6 +33,10 @@ public class BridgeGame {
         return Collections.unmodifiableList(progressBridges.get(moveOption));
     }
 
+    public int getRunCount() {
+        return runCount;
+    }
+
     public boolean isGameContinue() {
         Stream<String> flatProgressBridge = Stream.of(progressBridges.get(MoveOption.UP), progressBridges.get(MoveOption.DOWN))
                 .flatMap(Collection::stream);

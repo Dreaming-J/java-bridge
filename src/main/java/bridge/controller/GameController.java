@@ -57,7 +57,9 @@ public class GameController extends RepeatModule {
     }
 
     private void quit() {
-        //TODO: 수정
-        System.out.println("종료");
+        outputView.printResult();
+        outputView.printMap(bridgeGame.getProgressBridge(MoveOption.UP));
+        outputView.printMap(bridgeGame.getProgressBridge(MoveOption.DOWN));
+        outputView.printStatus(bridgeGame.isGameClear(), bridgeGame.getRunCount());
     }
 }

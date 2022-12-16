@@ -22,5 +22,13 @@ public class GameController extends RepeatModule {
 
     public void start() {
         bridgeGame.print();
+
+        do {
+            String moveCommand = repeat(inputView::readMoving);
+            bridgeGame.move(moveCommand);
+            //TODO: 진행상황 출력
+        } while (bridgeGame.isGameContinue());
+
+        bridgeGame.print();
     }
 }

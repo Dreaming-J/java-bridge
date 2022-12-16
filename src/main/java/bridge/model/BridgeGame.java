@@ -4,6 +4,8 @@ import bridge.enums.MoveOption;
 import bridge.enums.MoveResult;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class BridgeGame {
 
@@ -31,6 +33,25 @@ public class BridgeGame {
         System.out.println(progressBridges.get(MoveOption.UP));
         System.out.print("아래 칸: ");
         System.out.println(progressBridges.get(MoveOption.DOWN));
+    }
+
+    public boolean isGameContinue() {
+        Stream<String> flatProgressBridge = Stream.of(progressBridges.get(MoveOption.UP), progressBridges.get(MoveOption.DOWN))
+                .flatMap(Collection::stream);
+
+        return !(isGameClear() ||
+                flatProgressBridge
+                .anyMatch(tile -> Objects.equals(tile, MoveResult.UNPASS.get())));
+    }
+
+    public boolean isGameClear() {
+        Stream<String> flatProgressBridge = Stream.of(progressBridges.get(MoveOption.UP), progressBridges.get(MoveOption.DOWN))
+                .flatMap(Collection::stream);
+
+        int numberOfTilePassed = (int) flatProgressBridge
+                .filter(tile -> Objects.equals(tile, MoveResult.PASS.get()))
+                .count();
+        return numberOfTilePassed == bridge.size();
     }
 
     /**

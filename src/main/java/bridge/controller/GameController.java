@@ -1,6 +1,7 @@
 package bridge.controller;
 
 import bridge.BridgeRandomNumberGenerator;
+import bridge.enums.MoveOption;
 import bridge.model.BridgeGame;
 import bridge.model.BridgeMaker;
 import bridge.module.RepeatModule;
@@ -16,19 +17,18 @@ public class GameController extends RepeatModule {
     public GameController() {
         BridgeMaker bridgeMaker = new BridgeMaker(new BridgeRandomNumberGenerator());
         outputView.printStart();
+
         int bridgeSize = repeat(inputView::readBridgeSize);
         bridgeGame = new BridgeGame(bridgeMaker.makeBridge(bridgeSize));
     }
 
     public void start() {
-        bridgeGame.print();
-
         do {
             String moveCommand = repeat(inputView::readMoving);
             bridgeGame.move(moveCommand);
-            //TODO: 진행상황 출력
-        } while (bridgeGame.isGameContinue());
 
-        bridgeGame.print();
+            outputView.printMap(bridgeGame.getProgressBridge(MoveOption.UP));
+            outputView.printMap(bridgeGame.getProgressBridge(MoveOption.DOWN));
+        } while (bridgeGame.isGameContinue());
     }
 }

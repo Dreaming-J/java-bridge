@@ -14,6 +14,9 @@ public class BridgeGame {
     private int runCount;
 
     public BridgeGame(List<String> bridge) {
+        //TODO: 지우기
+        System.out.println(bridge);
+
         this.bridge = bridge;
         this.progressBridges = new EnumMap<>(MoveOption.class);
         this.runCount = 0;
@@ -26,13 +29,8 @@ public class BridgeGame {
         runCount++;
     }
 
-    public void print() {
-        //TODO: 지우기
-        System.out.println(bridge);
-        System.out.print("윗 칸: ");
-        System.out.println(progressBridges.get(MoveOption.UP));
-        System.out.print("아래 칸: ");
-        System.out.println(progressBridges.get(MoveOption.DOWN));
+    public List<String> getProgressBridge(MoveOption moveOption) {
+        return Collections.unmodifiableList(progressBridges.get(moveOption));
     }
 
     public boolean isGameContinue() {

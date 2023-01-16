@@ -1,24 +1,34 @@
 package bridge.view;
 
-import static bridge.enums.InputMsg.*;
-import static bridge.util.ConvertData.convertStringIntoInt;
-
 import camp.nextstep.edu.missionutils.Console;
+
+import static bridge.message.InputMsg.*;
 
 public class InputView {
 
+    private final InputValidator inputValidator = new InputValidator();
+
     public int readBridgeSize() {
-        System.out.println(LINE_BREAK.get() + MSG_INPUT_BRIDGE_SIZE.get());
-        return convertStringIntoInt(Console.readLine());
+        System.out.println(INPUT_MSG_BRIDGE_SIZE.get());
+        int bridgeSize = inputValidator.convertStringToInt(Console.readLine());
+        inputValidator.validateBridgeSize(bridgeSize);
+
+        return bridgeSize;
     }
 
     public String readMoving() {
-        System.out.println(LINE_BREAK.get() + MSG_INPUT_MOVING_CELL.get());
-        return Console.readLine();
+        System.out.println(INPUT_MSG_MOVE_COMMAND.get());
+        String moveCommand = Console.readLine();
+        inputValidator.validateMoveCommand(moveCommand);
+
+        return moveCommand;
     }
 
     public String readGameCommand() {
-        System.out.println(LINE_BREAK.get() + MSG_INPUT_GAME_RETRY.get());
-        return Console.readLine();
+        System.out.println(INPUT_MSG_RETRY_COMMAND.get());
+        String retryCommand = Console.readLine();
+        inputValidator.validateRetryCommand(retryCommand);
+
+        return retryCommand;
     }
 }

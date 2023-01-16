@@ -1,97 +1,105 @@
 package bridge.model;
 
-import bridge.BridgeMaker;
-import bridge. BridgeRandomNumberGenerator;
-import static bridge.enums.Constant_BridgeGame.*;
+import bridge.enums.MoveOption;
+import bridge.enums.MoveResult;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Stream;
 
 public class BridgeGame {
 
     private final List<String> bridge;
-    private Map<String, List<String>> progress = new HashMap<>();
-    private int tryAttempt;
+    private Map<MoveOption, List<String>> progressBridges;
+    private int runCount;
 
-    public BridgeGame(int size) {
-        this.tryAttempt = 0;
-        retry();
-        BridgeMaker bridgeMaker = new BridgeMaker(new BridgeRandomNumberGenerator());
-        this.bridge = bridgeMaker.makeBridge(size);
+    public BridgeGame(List<String> bridge) {
+        //TODO: 지우기
+        System.out.println(bridge);
+
+        this.bridge = bridge;
+        this.progressBridges = new EnumMap<>(MoveOption.class);
+        this.runCount = 0;
+        initProgress();
     }
 
-    public String result() {
-        if (isFallBridge()) {
-            return GAME_RESULT_LOSE.get();
+    public void initProgress() {
+        progressBridges.put(MoveOption.UP, new ArrayList<>());
+        progressBridges.put(MoveOption.DOWN, new ArrayList<>());
+        runCount++;
+    }
+
+    public List<String> getProgressBridge(MoveOption moveOption) {
+        return Collections.unmodifiableList(progressBridges.get(moveOption));
+    }
+
+    public int getRunCount() {
+        return runCount;
+    }
+
+    public boolean isGameContinue() {
+        Stream<String> flatProgressBridge = Stream.of(progressBridges.get(MoveOption.UP), progressBridges.get(MoveOption.DOWN))
+                .flatMap(Collection::stream);
+
+        return !(isGameClear() ||
+                flatProgressBridge
+                .anyMatch(tile -> Objects.equals(tile, MoveResult.UNPASS.get())));
+    }
+
+    public boolean isGameClear() {
+        Stream<String> flatProgressBridge = Stream.of(progressBridges.get(MoveOption.UP), progressBridges.get(MoveOption.DOWN))
+                .flatMap(Collection::stream);
+
+        int numberOfTilePassed = (int) flatProgressBridge
+                .filter(tile -> Objects.equals(tile, MoveResult.PASS.get()))
+                .count();
+        return numberOfTilePassed == bridge.size();
+    }
+
+    /**
+     * Move
+     */
+    public boolean move(String command) {
+        MoveOption moveOption = MoveOption.fromCommand(command);
+        oneStepMoveMainCommandBridge(moveOption);
+        oneStepMoveAnotherCommandBridge(moveOption.getAnotherOption());
+
+        return isSuccessToMove(moveOption);
+    }
+
+    private void oneStepMoveMainCommandBridge (MoveOption mainOption) {
+        List<String> mainProgressBridge = progressBridges.get(mainOption);
+        mainProgressBridge.add(calMoveResult(mainOption, mainProgressBridge));
+        progressBridges.put(mainOption, mainProgressBridge);
+    }
+
+    private void oneStepMoveAnotherCommandBridge (MoveOption anotherOption) {
+        List<String> anotherProgressBridge = progressBridges.get(anotherOption);
+        anotherProgressBridge.add(MoveResult.UNUSED.get());
+        progressBridges.put(anotherOption, anotherProgressBridge);
+    }
+
+    private String calMoveResult(MoveOption moveOption, List<String> progressBridge) {
+        int index = progressBridge.size();
+
+        if (Objects.equals(bridge.get(index), moveOption.getCommand())) {
+            return MoveResult.PASS.get();
         }
 
-        return GAME_RESULT_WIN.get();
+        return MoveResult.UNPASS.get();
     }
 
+    private boolean isSuccessToMove(MoveOption mainOption) {
+        List<String> mainProgressBridge = progressBridges.get(mainOption);
+        int lastIndex = mainProgressBridge.size() - 1;
+        String moveResult = mainProgressBridge.get(lastIndex);
+
+        return Objects.equals(moveResult, MoveResult.PASS.get());
+    }
+
+    /**
+     * Retry
+     */
     public void retry() {
-        this.tryAttempt++;
-        progress.put(UP_SIDE_PROGRESS.get(), new ArrayList<>());
-        progress.put(DOWN_SIDE_PROGRESS.get(), new ArrayList<>());
-    }
-
-    public void move(String input) {
-        int currentProgressSize = this.progress.get(UP_SIDE_PROGRESS.get()).size();
-        String movingResult = compareMovableCell(input, currentProgressSize);
-
-        if (input.equals(GAME_COMMAND_UP.get())) {
-            addProgress(movingResult, UP_SIDE_PROGRESS.get(), DOWN_SIDE_PROGRESS.get());
-        }
-        if (input.equals(GAME_COMMAND_DOWN.get())) {
-            addProgress(movingResult, DOWN_SIDE_PROGRESS.get(), UP_SIDE_PROGRESS.get());
-        }
-    }
-
-    public boolean isContinue() {
-        if (this.bridge.size() == this.progress.get(UP_SIDE_PROGRESS.get()).size()) {
-            return false;
-        }
-        if (this.progress.get(UP_SIDE_PROGRESS.get()).contains(UNMOVABLE_CELL.get())) {
-            return false;
-        }
-        if (this.progress.get(DOWN_SIDE_PROGRESS.get()).contains(UNMOVABLE_CELL.get())) {
-            return false;
-        }
-        return true;
-    }
-
-    public boolean isFallBridge() {
-        return this.progress.get(UP_SIDE_PROGRESS.get()).stream()
-                .anyMatch(element -> element.equals(UNMOVABLE_CELL.get()))
-                ||
-                this.progress.get(DOWN_SIDE_PROGRESS.get()).stream()
-                .anyMatch(element -> element.equals(UNMOVABLE_CELL.get()));
-    }
-
-    private String compareMovableCell(String input, int currentProgressSize) {
-        String movingResult = new String();
-
-        if (input.equals(this.bridge.get(currentProgressSize))) {
-            movingResult =  MOVABLE_CELL.get();
-        }
-        if (!input.equals(this.bridge.get(currentProgressSize))) {
-            movingResult =  UNMOVABLE_CELL.get();
-        }
-
-        return movingResult;
-    }
-
-    private void addProgress(String movingResult, String dest, String other) {
-        this.progress.get(dest).add(movingResult);
-        this.progress.get(other).add(BLANK_CELL.get());
-    }
-
-    public Map<String, List<String>> getProgress() {
-        return this.progress;
-    }
-
-    public int getTryAttempt() {
-        return this.tryAttempt;
+        initProgress();
     }
 }

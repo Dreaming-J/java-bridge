@@ -1,53 +1,65 @@
 package bridge.controller;
 
+import bridge.BridgeRandomNumberGenerator;
+import bridge.enums.MoveOption;
+import bridge.enums.RetryOption;
 import bridge.model.BridgeGame;
+import bridge.model.BridgeMaker;
+import bridge.module.RepeatModule;
+import bridge.view.InputView;
 import bridge.view.OutputView;
 
-import java.util.List;
+public class GameController extends RepeatModule {
 
-import static bridge.enums.Constant_BridgeGame.UP_SIDE_PROGRESS;
-import static bridge.enums.Constant_BridgeGame.DOWN_SIDE_PROGRESS;
-import static bridge.enums.Constant_BridgeGame.GAME_COMMAND_RETRY;
+    private final BridgeGame bridgeGame;
+    private final InputView inputView = new InputView();
+    private final OutputView outputView = new OutputView();
 
-public class GameController {
-
-    InputController inputController = new InputController();
-    BridgeGame bridgeGame;
-    OutputView outputView = new OutputView();
-
-    public void initGame() {
+    public GameController() {
+        BridgeMaker bridgeMaker = new BridgeMaker(new BridgeRandomNumberGenerator());
         outputView.printStart();
-        int bridgeSize = inputController.inputBridgeSize();
-        this.bridgeGame = new BridgeGame(bridgeSize);
 
-        startGame();
-        endGame();
+        int bridgeSize = repeat(inputView::readBridgeSize);
+        bridgeGame = new BridgeGame(bridgeMaker.makeBridge(bridgeSize));
     }
 
-    public void startGame() {
-        while (bridgeGame.isContinue()) {
-            String moving = inputController.inputMoving();
-            this.bridgeGame.move(moving);
-            outputView.printMap(this.bridgeGame.getProgress().get(UP_SIDE_PROGRESS.get()));
-            outputView.printMap(this.bridgeGame.getProgress().get(DOWN_SIDE_PROGRESS.get()));
+    public void start() {
+        do {
+            String moveCommand = repeat(inputView::readMoving);
+            bridgeGame.move(moveCommand);
+
+            outputView.printMap(bridgeGame.getProgressBridge(MoveOption.UP));
+            outputView.printMap(bridgeGame.getProgressBridge(MoveOption.DOWN));
+        } while (bridgeGame.isGameContinue());
+
+        retryBranch();
+    }
+
+    private void retryBranch() {
+        if (bridgeGame.isGameClear()) {
+            quit();
+            return;
         }
 
-        retryGame();
+        retry();
     }
 
-    public void retryGame() {
-        if (bridgeGame.isFallBridge()) {
-            String gameCommand = inputController.inputGameCommand();
+    private void retry() {
+        String retryCommand = repeat(inputView::readGameCommand);
 
-            if (gameCommand.equals(GAME_COMMAND_RETRY.get())) {
-                bridgeGame.retry();
-                startGame();
-            }
+        if (RetryOption.isRetry(retryCommand)) {
+            bridgeGame.retry();
+            start();
+            return;
         }
+
+        quit();
     }
 
-    public void endGame() {
-        outputView.printResult(bridgeGame.getProgress().get(UP_SIDE_PROGRESS.get()), bridgeGame.getProgress().get(DOWN_SIDE_PROGRESS.get()));
-        outputView.printStatus(bridgeGame.result(), bridgeGame.getTryAttempt());
+    private void quit() {
+        outputView.printResult();
+        outputView.printMap(bridgeGame.getProgressBridge(MoveOption.UP));
+        outputView.printMap(bridgeGame.getProgressBridge(MoveOption.DOWN));
+        outputView.printStatus(bridgeGame.isGameClear(), bridgeGame.getRunCount());
     }
 }

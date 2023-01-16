@@ -1,7 +1,7 @@
-package bridge;
+package bridge.model;
 
 import bridge.BridgeNumberGenerator;
-import static bridge.util.ConvertData.mappingBridgeCellIntToString;
+import bridge.enums.MoveOption;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,10 +17,10 @@ public class BridgeMaker {
     public List<String> makeBridge(int size) {
         List<String> bridge = new ArrayList<>();
 
-        for (int iter = 0; iter < size; iter++) {
-            int number = bridgeNumberGenerator.generate();
-            String value = mappingBridgeCellIntToString(number);
-            bridge.add(value);
+        for (int i = 0; i < size; i++) {
+            int randomNumber = bridgeNumberGenerator.generate();
+            String randomTile = MoveOption.fromNumber(randomNumber).getCommand();
+            bridge.add(randomTile);
         }
 
         return bridge;
